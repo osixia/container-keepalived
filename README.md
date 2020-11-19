@@ -1,197 +1,109 @@
-# osixia/keepalived
+# osixia/keepalived 🐳🛟🌴
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/osixia/keepalived.svg)][hub]
-[![Docker Stars](https://img.shields.io/docker/stars/osixia/keepalived.svg)][hub]
-[![](https://images.microbadger.com/badges/image/osixia/keepalived.svg)](http://microbadger.com/images/osixia/keepalived "Get your own image badge on microbadger.com")
+[docker hub]: https://hub.docker.com/r/osixia/keepalived
+[github]: https://github.com/osixia/container-keepalived
 
-[hub]: https://hub.docker.com/r/osixia/keepalived/
+[![Docker Pulls](https://img.shields.io/docker/pulls/osixia/keepalived.svg?style=flat-square)][docker hub]
+[![Docker Stars](https://img.shields.io/docker/stars/osixia/keepalived.svg?style=flat-square)][docker hub]
+[![GitHub Stars](https://img.shields.io/github/stars/osixia/container-keepalived?label=github%20stars&style=flat-square)][github]
+[![Contributors](https://img.shields.io/github/contributors/osixia/container-keepalived?style=flat-square)](https://github.com/osixia/container-keepalived/graphs/contributors)
 
-Latest release: 2.0.20 - Keepalived 2.0.20 - [Changelog](CHANGELOG.md) | [Docker Hub](https://hub.docker.com/r/osixia/keepalived/) 
+Production-ready [Keepalived](https://keepalived.org/) container image for VRRP high availability and VIP failover with dynamic configuration and hot reload.
 
-**A docker image to run Keepalived.**
-> [keepalived.org](http://keepalived.org/)
+![osixia/keepalived logo.](./docs/assets/images/osixia-container-keepalived.jpg)
 
-- [osixia/keepalived](#osixiakeepalived)
-	- [Quick start](#quick-start)
-	- [Beginner Guide](#beginner-guide)
-		- [Use your own Keepalived config](#use-your-own-keepalived-config)
-		- [Fix docker mounted file problems](#fix-docker-mounted-file-problems)
-		- [Debug](#debug)
-	- [Environment Variables](#environment-variables)
-		- [Set your own environment variables](#set-your-own-environment-variables)
-			- [Use command line argument](#use-command-line-argument)
-			- [Link environment file](#link-environment-file)
-			- [Make your own image or extend this image](#make-your-own-image-or-extend-this-image)
-	- [Advanced User Guide](#advanced-user-guide)
-		- [Extend osixia/keepalived:2.0.20 image](#extend-osixiakeepalived2020-image)
-		- [Make your own keepalived image](#make-your-own-keepalived-image)
-		- [Tests](#tests)
-		- [Under the hood: osixia/light-baseimage](#under-the-hood-osixialight-baseimage)
-	- [Security](#security)
-	- [Changelog](#changelog)
+- [osixia/keepalived 🐳🛟🌴](#osixiakeepalived-)
+	- [⚡ Quick Start](#-quick-start)
+	- [🔤 Environment Variables](#-environment-variables)
+	- [📄 Documentation](#-documentation)
+	- [🔀 Contributing](#-contributing)
+	- [🔓 License](#-license)
 
-## Quick start
+## ⚡ Quick Start
 
-This image require the kernel module ip_vs loaded on the host (`modprobe ip_vs`) and need to be run with : --cap-add=NET_ADMIN --net=host
+This image requires the `ip_vs` kernel module to be loaded on the host (`modprobe ip_vs`).  
+It must be run with the following Docker options:
 
-    docker run --cap-add=NET_ADMIN --cap-add=NET_BROADCAST --cap-add=NET_RAW --net=host -d osixia/keepalived:2.0.20
+``` bash
+docker run --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=NET_BROADCAST --network=host osixia/keepalived
+```
 
-## Beginner Guide
+**Using your own Keepalived configuration**
 
-### Use your own Keepalived config
-This image comes with a keepalived config file that can be easily customized via environment variables for a quick bootstrap,
-but setting your own keepalived.conf is possible. 2 options:
+This image ships with a Keepalived configuration template that can be customized using environment variables for quick bootstrapping.  
 
-- Link your config file at run time to `/container/service/keepalived/assets/keepalived.conf` :
+You can also provide your own `keepalived.conf` by mounting it at the path defined by `KEEPALIVED_CONF` (default: `/etc/keepalived/keepalived.conf`):
 
-      docker run --volume /data/my-keepalived.conf:/container/service/keepalived/assets/keepalived.conf --detach osixia/keepalived:2.0.20
+``` bash
+docker run --volume /data/my-keepalived.conf:/etc/keepalived/keepalived.conf osixia/keepalived
+```
 
-- Add your config file by extending or cloning this image, please refer to the [Advanced User Guide](#advanced-user-guide)
+**Passing command-line arguments to Keepalived**
 
-### Fix docker mounted file problems
+The `osixia/keepalived` container allows you to pass additional command-line arguments directly to the keepalived binary.
 
-You may have some problems with mounted files on some systems. The startup script try to make some file adjustment and fix files owner and permissions, this can result in multiple errors. See [Docker documentation](https://docs.docker.com/v1.4/userguide/dockervolumes/#mount-a-host-file-as-a-data-volume).
+Arguments specified after `--` are forwarded to the keepalived process inside the container:
 
-To fix that run the container with `--copy-service` argument :
+``` bash
+docker run osixia/keepalived -- --dont-release-ipvs
+```
 
-		docker run [your options] osixia/keepalived:2.0.20 --copy-service
+**Debugging**
 
-### Debug
+To debug the container manually, you can start it with an interactive shell.
 
-The container default log level is **info**.
-Available levels are: `none`, `error`, `warning`, `info`, `debug` and `trace`.
+The `--debug` option from `osixia/baseimage` enables debug logging, installs debugging tools, and launches an interactive shell.
 
-Example command to run the container in `debug` mode:
+If Keepalived keeps crashing, you can add `--skip-process` to start the container without launching service processes.
 
-	docker run --detach osixia/keepalived:2.0.20 --loglevel debug
+``` bash
+docker run -it osixia/keepalived --debug
+docker run -it osixia/keepalived --skip-process --debug 
+```
 
-See all command line options:
+You can also enable Keepalived debugging options:
+``` bash
+docker run osixia/keepalived -- --log-detail --dump-conf
+```
 
-	docker run osixia/keepalived:2.0.20 --help
+To see all available command-line options:
+``` bash
+docker run --rm osixia/keepalived --help # osixia/baseimage options
+docker run --rm osixia/keepalived -x keepalived -- --help # keepalived command-line options
+```
 
+## 🔤 Environment Variables
 
-## Environment Variables
+| Variable                        | Description                                                           | Default                                                                     |
+| ------------------------------- | --------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| `KEEPALIVED_CONF`               | Path to the Keepalived configuration file                             | `/etc/keepalived/keepalived.conf`                                           |
+| `KEEPALIVED_CONF_TEMPLATE`      | Path to the configuration template used to generate `keepalived.conf` | `/container/services/keepalived-conf/assets/confs/keepalived.conf.template` |
+| `KEEPALIVED_CONF_RELOAD_SCRIPT` | Script executed when configuration changes are detected               | `/container/services/keepalived-conf/assets/scripts/reload.sh`              |
+| `KEEPALIVED_INTERFACE`          | Network interface used by VRRP                                        | `eth0`                                                                      |
+| `KEEPALIVED_STATE`              | Initial VRRP state (`MASTER` or `BACKUP`)                             | `BACKUP`                                                                    |
+| `KEEPALIVED_ROUTER_ID`          | VRRP router ID                                                        | `51`                                                                        |
+| `KEEPALIVED_PRIORITY`           | VRRP priority of the node                                             | `150`                                                                       |
+| `KEEPALIVED_UNICAST_PEERS`      | List of peer nodes used for VRRP unicast communication                | `192.168.1.10` `192.168.1.11`                                               |
+| `KEEPALIVED_VIRTUAL_IPS`        | Virtual IP addresses managed by Keepalived                            | `192.168.1.231` `192.168.1.232`                                             |
+| `KEEPALIVED_PASSWORD`           | VRRP authentication password                                          | `d0cker`                                                                    |
+| `KEEPALIVED_NOTIFY_SCRIPT`      | Script executed when Keepalived state changes                         | `/container/services/keepalived/assets/scripts/notify.sh`                   |
 
-Environment variables defaults are set in **image/environment/default.yaml**
+## 📄 Documentation
 
-See how to [set your own environment variables](#set-your-own-environment-variables)
+See full documentation and complete features list on [osixia/keepalived documentation](https://opensource.osixia.net/projects/container-images/keepalived/).
 
+This image is based on [osixia/baseimage](https://github.com/osixia/container-baseimage)
 
-- **KEEPALIVED_INTERFACE**: Keepalived network interface. Defaults to `eth0`
-- **KEEPALIVED_PASSWORD**: Keepalived password. Defaults to `d0cker`
-- **KEEPALIVED_PRIORITY** Keepalived node priority. Defaults to `150`
-- **KEEPALIVED_ROUTER_ID** Keepalived virtual router ID. Defaults to `51`
+## 🔀 Contributing
 
-- **KEEPALIVED_UNICAST_PEERS** Keepalived unicast peers. Defaults to :
-      - 192.168.1.10
-      - 192.168.1.11
+If you find this project useful here's how you can help:
 
-  If you want to set this variable at docker run command add the tag `#PYTHON2BASH:` and convert the yaml in python:
+- Send a pull request with new features and bug fixes.
+- Help new users with [issues](https://github.com/osixia/container-keepalived/issues) they may encounter.
+- Support the development of this image and star [this repo][github] and the image [docker hub repository][docker hub].
 
-      docker run --env KEEPALIVED_UNICAST_PEERS="#PYTHON2BASH:['192.168.1.10', '192.168.1.11']" --detach osixia/keepalived:2.0.20
+This project use [dagger](https://github.com/dagger/dagger) as CI/CD tool to build, test and deploy images. See source code and usefull command lines in [build directory](build/).
 
-  To convert yaml to python online : http://yaml-online-parser.appspot.com/
+## 🔓 License
 
-
-- **KEEPALIVED_VIRTUAL_IPS** Keepalived virtual IPs. Defaults to :
-
-      - 192.168.1.231
-      - 192.168.1.232
-
-  If you want to set this variable at docker run command convert the yaml in python, see above.
-
-- **KEEPALIVED_NOTIFY** Script to execute when node state change. Defaults to `/container/service/keepalived/assets/notify.sh`
-
-- **KEEPALIVED_COMMAND_LINE_ARGUMENTS** Keepalived command line arguments; Defaults to `--log-detail --dump-conf`
-
-- **KEEPALIVED_STATE** The starting state of keepalived; it can either be MASTER or BACKUP.
-
-### Set your own environment variables
-
-#### Use command line argument
-Environment variables can be set by adding the --env argument in the command line, for example:
-
-    docker run --env KEEPALIVED_INTERFACE="eno1" --env KEEPALIVED_PASSWORD="password!" \
-    --env KEEPALIVED_PRIORITY="100" --detach osixia/keepalived:2.0.20
-
-
-#### Link environment file
-
-For example if your environment file is in :  /data/environment/my-env.yaml
-
-	docker run --volume /data/environment/my-env.yaml:/container/environment/01-custom/env.yaml \
-	--detach osixia/keepalived:2.0.20
-
-Take care to link your environment file to `/container/environment/XX-somedir` (with XX < 99 so they will be processed before default environment files) and not  directly to `/container/environment` because this directory contains predefined baseimage environment files to fix container environment (INITRD, LANG, LANGUAGE and LC_CTYPE).
-
-#### Make your own image or extend this image
-
-This is the best solution if you have a private registry. Please refer to the [Advanced User Guide](#advanced-user-guide) just below.
-
-## Advanced User Guide
-
-### Extend osixia/keepalived:2.0.20 image
-
-If you need to add your custom TLS certificate, bootstrap config or environment files the easiest way is to extends this image.
-
-Dockerfile example:
-
-    FROM osixia/keepalived:2.0.20
-    MAINTAINER Your Name <your@name.com>
-
-    ADD keepalived.conf /container/service/keepalived/assets/keepalived.conf
-    ADD environment /container/environment/01-custom
-    ADD scripts.sh /container/service/keepalived/assets/notify.sh
-
-
-### Make your own keepalived image
-
-
-Clone this project :
-
-	git clone https://github.com/osixia/docker-keepalived
-	cd docker-keepalived
-
-Adapt Makefile, set your image NAME and VERSION, for example :
-
-	NAME = osixia/keepalived
-	VERSION = 1.3.5
-
-	becomes :
-	NAME = billy-the-king/keepalived
-	VERSION = 0.1.0
-
-Add your custom scripts, environment files, config ...
-
-Build your image :
-
-	make build
-
-Run your image :
-
-	docker run -d billy-the-king/keepalived:0.1.0
-
-### Tests
-
-We use **Bats** (Bash Automated Testing System) to test this image:
-
-> [https://github.com/bats-core/bats-core](https://github.com/bats-core/bats-core)
-
-Install Bats, and in this project directory run :
-
-	make test
-
-
-### Under the hood: osixia/light-baseimage
-
-This image is based on osixia/light-baseimage.
-More info: https://github.com/osixia/docker-light-baseimage
-
-## Security
-If you discover a security vulnerability within this docker image, please send an email to the Osixia! team at security@osixia.net. For minor vulnerabilities feel free to add an issue here on github.
-
-Please include as many details as possible.
-
-## Changelog
-
-Please refer to: [CHANGELOG.md](CHANGELOG.md)
+This project is licensed under the terms of the MIT license. See [LICENSE.md](LICENSE.md) file for more information.
