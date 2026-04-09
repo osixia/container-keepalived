@@ -20,6 +20,6 @@ if [ ! -e "${KEEPALIVED_CONF}" ]; then
     export KEEPALIVED_NOTIFY
   fi
 
-  container envsubst "${KEEPALIVED_CONF_TEMPLATE}" "${KEEPALIVED_CONF}"
+  container envsubst file "${KEEPALIVED_CONF_TEMPLATE}" "${KEEPALIVED_CONF}"
 
 fi
