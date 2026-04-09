@@ -8,5 +8,5 @@ go run main.go --help
 ## Run Tests
 ```
 go mod vendor
-go run main.go test ../Dockerfile
+go run main.go job test ../Dockerfile
 ```

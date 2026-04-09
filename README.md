@@ -8,18 +8,18 @@
 [![GitHub Stars](https://img.shields.io/github/stars/osixia/container-keepalived?label=github%20stars&style=flat-square)][github]
 [![Contributors](https://img.shields.io/github/contributors/osixia/container-keepalived?style=flat-square)](https://github.com/osixia/container-keepalived/graphs/contributors)
 
-Production-ready [Keepalived](https://keepalived.org/) container image for VRRP high availability and VIP failover with dynamic configuration and hot reload.
+[Keepalived](https://keepalived.org/) container image for VRRP high availability and VIP failover with dynamic configuration and hot reload.
 
 ![osixia/keepalived logo.](./docs/assets/images/osixia-container-keepalived.jpg)
 
 - [osixia/keepalived 🐳🛟🌴](#osixiakeepalived-)
-	- [⚡ Quick Start](#-quick-start)
+	- [⚡ Quickstart](#-quickstart)
 	- [🔤 Environment Variables](#-environment-variables)
 	- [📄 Documentation](#-documentation)
 	- [🔀 Contributing](#-contributing)
 	- [🔓 License](#-license)
 
-## ⚡ Quick Start
+## ⚡ Quickstart
 
 This image requires the `ip_vs` kernel module to be loaded on the host (`modprobe ip_vs`).  
 It must be run with the following Docker options:
@@ -52,13 +52,13 @@ docker run osixia/keepalived -- --dont-release-ipvs
 
 To debug the container manually, you can start it with an interactive shell.
 
-The `--debug` option from `osixia/baseimage` enables debug logging, installs debugging tools, and launches an interactive shell.
+The `--log-level debug --bash` options from `osixia/baseimage` enables debug logging and launches an interactive shell.
 
 If Keepalived keeps crashing, you can add `--skip-process` to start the container without launching service processes.
 
 ``` bash
-docker run -it osixia/keepalived --debug
-docker run -it osixia/keepalived --skip-process --debug 
+docker run -it osixia/keepalived --log-level debug --bash
+docker run -it osixia/keepalived --skip-process --log-level debug --bash
 ```
 
 You can also enable Keepalived debugging options:
@@ -102,7 +102,7 @@ If you find this project useful here's how you can help:
 - Help new users with [issues](https://github.com/osixia/container-keepalived/issues) they may encounter.
 - Support the development of this image and star [this repo][github] and the image [docker hub repository][docker hub].
 
-This project use [dagger](https://github.com/dagger/dagger) as CI/CD tool to build, test and deploy images. See source code and usefull command lines in [build directory](build/).
+This project uses a CI/CD tool to build, test, and deploy images. See the source code and useful command lines in [build directory](build/).
 
 ## 🔓 License
 
