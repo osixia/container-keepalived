@@ -1,11 +1,12 @@
-ARG BASE_IMAGE="osixia/baseimage:alpine-2.0.0-alpha2"
+ARG BASE_IMAGE="osixia/baseimage:alpine-2.0.0-rc"
 FROM ${BASE_IMAGE}
 
 ARG IMAGE="osixia/keepalived:develop"
 ENV CONTAINER_IMAGE=${IMAGE}
 
 # Keepalived version
-ARG KEEPALIVED_VERSION=2.3.4
+ARG KEEPALIVED_VERSION=2.4.3
+ARG KEEPALIVED_MD5="5a5c30d3275c380c8cf1a2df67ebbc3c"
 
 # Download and compile keepalived from sources
 RUN container packages install --update --clean \
@@ -39,11 +40,14 @@ RUN container packages install --update --clean \
     pcre2-dev \
     pkgconf \
     && curl -o keepalived.tar.gz -SL https://keepalived.org/software/keepalived-${KEEPALIVED_VERSION}.tar.gz \
+    && echo "${KEEPALIVED_MD5}  keepalived.tar.gz" | md5sum -c - \
     && mkdir -p /tmp/keepalived-sources \
     && tar -xzf keepalived.tar.gz --strip 1 -C /tmp/keepalived-sources \
     && cd /tmp/keepalived-sources \
-    && ./configure \
-    && CFLAGS="-O0" CXXFLAGS="-O0" make -j1 \
+    && (CFLAGS="-O0" CXXFLAGS="-O0" ./configure \
+        --enable-json \
+        || { cat config.log; exit 1; }) \
+    && make -j1 V=1 \
     && make install \
     && cd - \
     && rm -rf keepalived.tar.gz \

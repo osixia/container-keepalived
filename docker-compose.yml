@@ -1,0 +1,15 @@
+services:
+  keepalived:
+    image: osixia/keepalived
+    container_name: keepalived
+    network_mode: host
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+      - NET_BROADCAST
+
+# Optional: volume for config, uncomment if needed
+#    volumes:
+#      - config:/etc/keepalived
+#volumes:
+#  config:

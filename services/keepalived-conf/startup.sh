@@ -2,7 +2,7 @@
 
 # if container log level is trace:
 # print commands and their arguments as they are executed
-container logger level eq trace && set -x
+container log level eq trace && set -x
 
 if [ ! -e "${KEEPALIVED_CONF}" ]; then
 
@@ -20,6 +20,9 @@ if [ ! -e "${KEEPALIVED_CONF}" ]; then
     export KEEPALIVED_NOTIFY
   fi
 
-  container envsubst "${KEEPALIVED_CONF_TEMPLATE}" "${KEEPALIVED_CONF}"
+  container log info "Generating ${KEEPALIVED_CONF} from ${KEEPALIVED_CONF_TEMPLATE} using envsubst ..."
+  container envsubst file "${KEEPALIVED_CONF_TEMPLATE}" "${KEEPALIVED_CONF}"
+
+  container log debug < "${KEEPALIVED_CONF}"
 
 fi
