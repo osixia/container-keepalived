@@ -8,18 +8,18 @@
 [![GitHub Stars](https://img.shields.io/github/stars/osixia/container-keepalived?label=github%20stars&style=flat-square)][github]
 [![Contributors](https://img.shields.io/github/contributors/osixia/container-keepalived?style=flat-square)](https://github.com/osixia/container-keepalived/graphs/contributors)
 
-Production-ready [Keepalived](https://keepalived.org/) container image for VRRP high availability and VIP failover with dynamic configuration and hot reload.
+[Keepalived](https://keepalived.org/) container image for VRRP high availability and VIP failover with dynamic configuration and hot reload.
 
 ![osixia/keepalived logo.](./docs/assets/images/osixia-container-keepalived.jpg)
 
 - [osixia/keepalived 🐳🛟🌴](#osixiakeepalived-)
-	- [⚡ Quick Start](#-quick-start)
+	- [⚡ Quickstart](#-quickstart)
 	- [🔤 Environment Variables](#-environment-variables)
 	- [📄 Documentation](#-documentation)
 	- [🔀 Contributing](#-contributing)
 	- [🔓 License](#-license)
 
-## ⚡ Quick Start
+## ⚡ Quickstart
 
 This image requires the `ip_vs` kernel module to be loaded on the host (`modprobe ip_vs`).  
 It must be run with the following Docker options:
