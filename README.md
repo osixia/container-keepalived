@@ -102,7 +102,7 @@ If you find this project useful here's how you can help:
 - Help new users with [issues](https://github.com/osixia/container-keepalived/issues) they may encounter.
 - Support the development of this image and star [this repo][github] and the image [docker hub repository][docker hub].
 
-This project use [dagger](https://github.com/dagger/dagger) as CI/CD tool to build, test and deploy images. See source code and usefull command lines in [build directory](build/).
+This project use a CI/CD tool to build, test and deploy images. See source code and usefull command lines in [build directory](build/).
 
 ## 🔓 License
 

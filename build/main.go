@@ -13,7 +13,7 @@ func main() {
 	// image
 
 	var KeepalivedImage = &config.Image{
-		BaseImage:    "osixia/baseimage:alpine-2.0.0-alpha5",
+		BaseImage:    "osixia/baseimage:alpine-2.0.0-beta3",
 		Distribution: config.Alpine,
 
 		Name:        "osixia/keepalived",

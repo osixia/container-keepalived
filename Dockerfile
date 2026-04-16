@@ -1,4 +1,4 @@
-ARG BASE_IMAGE="osixia/baseimage:alpine-2.0.0-alpha5"
+ARG BASE_IMAGE="osixia/baseimage:alpine-2.0.0-beta3"
 FROM ${BASE_IMAGE}
 
 ARG IMAGE="osixia/keepalived:develop"
