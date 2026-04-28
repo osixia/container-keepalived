@@ -65,8 +65,6 @@ jobs:
           go run main.go provider github ../Dockerfile --github-ref "${GITHUB_REF}" --github-token "${{ secrets.GITHUB_TOKEN }}" --changelog ../CHANGELOG.md --username "${{ secrets.REGISTRY_USERNAME }}" --password "${{ secrets.REGISTRY_PASSWORD }}" --digests-file "${DIGESTS_FILE}" ${{ vars.OSX_GITHUB_FLAGS }}
       - name: Sign images and generate SBOM
         if: startsWith(github.ref, 'refs/tags/')
-        env:
-          COSIGN_EXPERIMENTAL: "1"
         run: |
           echo "${{ secrets.REGISTRY_PASSWORD }}" | docker login -u "${{ secrets.REGISTRY_USERNAME }}" --password-stdin
           while IFS= read -r ref; do
