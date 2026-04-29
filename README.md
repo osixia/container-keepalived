@@ -10,7 +10,7 @@
 
 [Keepalived](https://keepalived.org/) container image for VRRP high availability and VIP failover with dynamic configuration and hot reload.
 
-![osixia/keepalived logo.](./docs/assets/images/osixia-container-keepalived.jpg)
+![osixia/keepalived logo.](./docs/assets/images/osixia-container-keepalived.png)
 
 - [osixia/keepalived 🐳🛟🌴](#osixiakeepalived-)
 	- [⚡ Quickstart](#-quickstart)
