@@ -45,6 +45,7 @@ RUN container packages install --update --clean \
     && tar -xzf keepalived.tar.gz --strip 1 -C /tmp/keepalived-sources \
     && cd /tmp/keepalived-sources \
     && ./configure \
+    --enable-json \
     && CFLAGS="-O0" CXXFLAGS="-O0" make -j1 \
     && make install \
     && cd - \
