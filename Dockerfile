@@ -5,8 +5,8 @@ ARG IMAGE="osixia/keepalived:develop"
 ENV CONTAINER_IMAGE=${IMAGE}
 
 # Keepalived version
-ARG KEEPALIVED_VERSION=2.3.4
-ARG KEEPALIVED_MD5="622b09f4502ada4c6d20ef1c29205f77"
+ARG KEEPALIVED_VERSION=2.4.3
+ARG KEEPALIVED_MD5="5a5c30d3275c380c8cf1a2df67ebbc3c"
 
 # Download and compile keepalived from sources
 RUN container packages install --update --clean \

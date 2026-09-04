@@ -4,6 +4,10 @@ Please refer to the upstream [Keepalived Release Notes](https://www.keepalived.o
 
 The format is based on [Keep a Changelog](https://keepachangelog.com) and this project follows keepalived versioning.
 
+## [2.4.3] - 2026-09-02
+### Changed
+  - Upgrade Keepalived version to 2.4.3
+
 ## [2.3.4] - 2026-03-16
 ### Added
   - keepalived-conf service
@@ -220,6 +224,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
 ## 0.1.0 - 2015-06-16
 Initial release
 
+[2.4.3]: https://github.com/osixia/docker-keepalived/compare/2.3.4...2.4.3
 [2.3.4]: https://github.com/osixia/docker-keepalived/compare/v2.1.5...2.3.4
 [2.1.5]: https://github.com/osixia/docker-keepalived/compare/v2.0.20...v2.1.5
 [2.0.20]: https://github.com/osixia/docker-keepalived/compare/v2.0.19...v2.0.20
