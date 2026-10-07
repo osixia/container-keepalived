@@ -4,14 +4,38 @@ Please refer to the upstream [Keepalived Release Notes](https://www.keepalived.o
 
 The format is based on [Keep a Changelog](https://keepachangelog.com) and this project follows keepalived versioning.
 
+## [2.4.3] - 2026-10-06
+### Added
+  - Enable JSON support in Keepalived
+  - Docker Compose example with host networking and required capabilities
+  - Verify the Keepalived source archive checksum during the image build
+
+### Changed
+  - Upgrade Keepalived version to 2.4.3
+  - Upgrade baseimage to osixia/baseimage:alpine-2.0.0-rc
+  - Update build tool dependencies
+
+### Fixed
+  - Forward notification script output to container logs
+
 ## [2.3.4] - 2026-03-16
 ### Added
-  - keepalived-conf service
+  - keepalived-conf service to generate configuration from a template and automatically reload Keepalived when the configuration changes
+  - KEEPALIVED_CONF, KEEPALIVED_CONF_TEMPLATE and KEEPALIVED_CONF_RELOAD_SCRIPT environment variables
 
 ### Changed
   - Upgrade Keepalived version to 2.3.4
   - Upgrade baseimage to osixia/baseimage:alpine-2.0.0-alpha2
-  - Use GitHub action for CI/CD and osixia/container-baseimage/build tool
+  - Use GitHub Actions for CI/CD and osixia/container-baseimage/build tool, with image signing and SBOM attestations for tagged releases
+  - Migrate default environment configuration from YAML to an .env file
+  - Use space-separated values for KEEPALIVED_UNICAST_PEERS and KEEPALIVED_VIRTUAL_IPS
+  - Rename KEEPALIVED_NOTIFY to KEEPALIVED_NOTIFY_SCRIPT
+  - Change the default configuration path to /etc/keepalived/keepalived.conf
+  - Move container services from image/service to services and the Dockerfile to the repository root
+
+### Removed
+  - KEEPALIVED_COMMAND_LINE_ARGUMENTS environment variable; pass Keepalived arguments directly to the container instead
+  - Travis CI, Makefile and legacy Bats tests
 
 ## [2.1.5] - 2020-11-19
 ### Changed
@@ -220,6 +244,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
 ## 0.1.0 - 2015-06-16
 Initial release
 
+[2.4.3]: https://github.com/osixia/docker-keepalived/compare/2.3.4...2.4.3
 [2.3.4]: https://github.com/osixia/docker-keepalived/compare/v2.1.5...2.3.4
 [2.1.5]: https://github.com/osixia/docker-keepalived/compare/v2.0.20...v2.1.5
 [2.0.20]: https://github.com/osixia/docker-keepalived/compare/v2.0.19...v2.0.20

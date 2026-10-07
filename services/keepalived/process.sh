@@ -2,6 +2,6 @@
 
 # if container log level is trace:
 # print commands and their arguments as they are executed
-container logger level eq trace && set -x
+container log level eq trace && set -x
 
 exec /usr/local/sbin/keepalived -f "${KEEPALIVED_CONF}" --dont-fork --log-console "$@"

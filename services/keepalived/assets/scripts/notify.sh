@@ -2,7 +2,10 @@
 
 # if container log level is trace:
 # print commands and their arguments as they are executed
-container logger level eq trace && set -x
+container log level eq trace && set -x
+
+# redirect stdout and stderr to PID 1 (container main process) for proper log collection
+exec 1>/proc/1/fd/1 2>/proc/1/fd/2
 
 # for ANY state transition.
 # "notify" script is called AFTER the notify_* script(s) and
@@ -24,27 +27,27 @@ STATE=$3
 
 case ${STATE} in
     "MASTER")
-        container logger info "VRRP ${INSTANCE} ${NAME} entered MASTER state"
+        container log info "VRRP ${INSTANCE} ${NAME} entered MASTER state"
         exit 0
     ;;
     "BACKUP")
-        container logger info "VRRP ${INSTANCE} ${NAME} entered BACKUP state"
+        container log info "VRRP ${INSTANCE} ${NAME} entered BACKUP state"
         exit 0
     ;;
     "FAULT")
-        container logger warning "VRRP ${INSTANCE} ${NAME} entered FAULT state"
+        container log warning "VRRP ${INSTANCE} ${NAME} entered FAULT state"
         exit 0
     ;;
     "STOP")
-        container logger warning "VRRP ${INSTANCE} ${NAME} entered STOP state"
+        container log warning "VRRP ${INSTANCE} ${NAME} entered STOP state"
         exit 0
     ;;
     "DELETED")
-        container logger warning "VRRP ${INSTANCE} ${NAME} entered DELETED state"
+        container log warning "VRRP ${INSTANCE} ${NAME} entered DELETED state"
         exit 0
     ;;
     *)
-        container logger error "VRRP ${INSTANCE} ${NAME} entered unknown keepalived state: ${STATE}"
+        container log error "VRRP ${INSTANCE} ${NAME} entered unknown keepalived state: ${STATE}"
         exit 1
     ;;
 esac
