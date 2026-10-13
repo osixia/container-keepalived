@@ -13,64 +13,67 @@
 ![osixia/keepalived logo.](./docs/assets/images/osixia-container-keepalived.png)
 
 - [osixia/keepalived 🐳🛟🌴](#osixiakeepalived-)
+	- [✨ Features](#-features)
 	- [⚡ Quickstart](#-quickstart)
 	- [🔤 Environment Variables](#-environment-variables)
 	- [📄 Documentation](#-documentation)
 	- [🔀 Contributing](#-contributing)
 	- [🔓 License](#-license)
 
+## ✨ Features
+
+- A virtual IP shared between your nodes, configured with a few environment variables.
+- Three levels of [configuration](https://opensource.osixia.net/projects/container-images/keepalived/configuration/): environment variables, your own template, or your own `keepalived.conf`.
+- [Hot reload](https://opensource.osixia.net/projects/container-images/keepalived/configuration/#hot-reload) when the configuration file changes, without restarting the container.
+- State changes in the container logs, with a pluggable [notify script](https://opensource.osixia.net/projects/container-images/keepalived/configuration/#notify-script).
+- Up-to-date Keepalived built from the upstream sources on Alpine, with JSON status support.
+
 ## ⚡ Quickstart
 
-This image requires the `ip_vs` kernel module to be loaded on the host (`modprobe ip_vs`).  
-It must be run with the following Docker options:
+This image requires the `ip_vs` kernel module to be loaded on the host (`modprobe ip_vs`), host networking and the `NET_ADMIN`, `NET_RAW` and `NET_BROADCAST` capabilities.
+
+Run it on each node, with the addresses of the other nodes in `KEEPALIVED_UNICAST_PEERS` and a different `KEEPALIVED_PRIORITY`:
 
 ``` bash
-docker run --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=NET_BROADCAST --network=host osixia/keepalived
+docker run --detach --name keepalived \
+  --network=host --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=NET_BROADCAST \
+  --env KEEPALIVED_INTERFACE="eth0" \
+  --env KEEPALIVED_VIRTUAL_IPS="192.168.1.231" \
+  --env KEEPALIVED_UNICAST_PEERS="192.168.1.11" \
+  --env KEEPALIVED_PRIORITY="150" \
+  --env KEEPALIVED_PASSWORD="s3cret" \
+  osixia/keepalived
 ```
+
+The node with the highest priority takes the virtual IP, the other one takes over when it goes down. See the [quickstart](https://opensource.osixia.net/projects/container-images/keepalived/quickstart/) for the full two-node example, or [docker-compose.yml](docker-compose.yml).
 
 **Using your own Keepalived configuration**
 
-This image ships with a Keepalived configuration template that can be customized using environment variables for quick bootstrapping.  
-
-You can also provide your own `keepalived.conf` by mounting it at the path defined by `KEEPALIVED_CONF` (default: `/etc/keepalived/keepalived.conf`):
+Mount your own `keepalived.conf` at `/etc/keepalived/keepalived.conf`. Keepalived is reloaded when the file changes:
 
 ``` bash
-docker run --volume /data/my-keepalived.conf:/etc/keepalived/keepalived.conf osixia/keepalived
+docker run --network=host --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=NET_BROADCAST \
+  --volume /data/my-keepalived.conf:/etc/keepalived/keepalived.conf osixia/keepalived
 ```
 
 **Passing command-line arguments to Keepalived**
 
-The `osixia/keepalived` container allows you to pass additional command-line arguments directly to the keepalived binary.
+Arguments specified after `--` are forwarded to the keepalived process:
 
-Arguments specified after `--` are forwarded to the keepalived process inside the container:
-
-``` bash
-docker run osixia/keepalived -- --dont-release-ipvs
-```
-
-**Debugging**
-
-To debug the container manually, you can start it with an interactive shell.
-
-The `--log-level debug --bash` options from `osixia/baseimage` enables debug logging and launches an interactive shell.
-
-If Keepalived keeps crashing, you can add `--skip-process` to start the container without launching service processes.
-
-``` bash
-docker run -it osixia/keepalived --log-level debug --bash
-docker run -it osixia/keepalived --skip-process --log-level debug --bash
-```
-
-You can also enable Keepalived debugging options:
 ``` bash
 docker run osixia/keepalived -- --log-detail --dump-conf
 ```
 
-To see all available command-line options:
+**Debugging**
+
 ``` bash
+docker run -it osixia/keepalived --log-level debug --bash # debug logs and interactive shell
+docker run -it osixia/keepalived --skip-process --log-level debug --bash # same, without starting Keepalived
 docker run --rm osixia/keepalived --help # osixia/baseimage options
 docker run --rm osixia/keepalived -x keepalived -- --help # keepalived command-line options
 ```
+
+More in [troubleshooting](https://opensource.osixia.net/projects/container-images/keepalived/troubleshooting/).
 
 ## 🔤 Environment Variables
 
@@ -83,14 +86,14 @@ docker run --rm osixia/keepalived -x keepalived -- --help # keepalived command-l
 | `KEEPALIVED_STATE`              | Initial VRRP state (`MASTER` or `BACKUP`)                             | `BACKUP`                                                                    |
 | `KEEPALIVED_ROUTER_ID`          | VRRP router ID                                                        | `51`                                                                        |
 | `KEEPALIVED_PRIORITY`           | VRRP priority of the node                                             | `150`                                                                       |
-| `KEEPALIVED_UNICAST_PEERS`      | List of peer nodes used for VRRP unicast communication                | `192.168.1.10` `192.168.1.11`                                               |
-| `KEEPALIVED_VIRTUAL_IPS`        | Virtual IP addresses managed by Keepalived                            | `192.168.1.231` `192.168.1.232`                                             |
+| `KEEPALIVED_UNICAST_PEERS`      | Space-separated addresses of the other nodes                          | `192.168.1.10 192.168.1.11`                                                 |
+| `KEEPALIVED_VIRTUAL_IPS`        | Space-separated virtual IP addresses managed by Keepalived            | `192.168.1.231 192.168.1.232`                                               |
 | `KEEPALIVED_PASSWORD`           | VRRP authentication password                                          | `d0cker`                                                                    |
 | `KEEPALIVED_NOTIFY_SCRIPT`      | Script executed when Keepalived state changes                         | `/container/services/keepalived/assets/scripts/notify.sh`                   |
 
 ## 📄 Documentation
 
-See full documentation and complete features list on [osixia/keepalived documentation](https://opensource.osixia.net/projects/container-images/keepalived/).
+See full documentation on [osixia/keepalived documentation](https://opensource.osixia.net/projects/container-images/keepalived/), including the [upgrade guide](https://opensource.osixia.net/projects/container-images/keepalived/upgrade/) from 2.1.5 and older.
 
 This image is based on [osixia/baseimage](https://github.com/osixia/container-baseimage).
 
