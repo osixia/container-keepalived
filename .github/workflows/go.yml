@@ -99,6 +99,7 @@ jobs:
           go run main.go provider github ../Dockerfile --github-ref "${GITHUB_REF}" --github-token "${GITHUB_TOKEN}" --changelog ../CHANGELOG.md --username "${REGISTRY_USERNAME}" --password "${REGISTRY_PASSWORD}" --digests-file "${DIGESTS_FILE}" ${{ vars.OSX_GITHUB_FLAGS }}
       - name: Sign images and generate SBOM
         env:
+          COSIGN_EXPERIMENTAL: '1'
           REGISTRY_USERNAME: ${{ secrets.REGISTRY_USERNAME }}
           REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
         run: |
