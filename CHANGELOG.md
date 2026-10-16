@@ -5,6 +5,9 @@ Please refer to the upstream [Keepalived Release Notes](https://www.keepalived.o
 The format is based on [Keep a Changelog](https://keepachangelog.com) and this project follows keepalived versioning.
 
 ## [Unreleased]
+### Added
+  - Enable BFD and HTTP_GET regex support in Keepalived
+
 ### Changed
   - Upgrade baseimage to osixia/baseimage:alpine-2.0.0
   - Use osixia/dagger-build as build tool
