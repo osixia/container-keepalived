@@ -53,7 +53,7 @@ func main() {
 		if err != nil {
 			return nil, err
 		}
-		if err := tests.Run(ctx, client, builds); err != nil {
+		if err := tests.Run(ctx, builds); err != nil {
 			return nil, err
 		}
 		return builds, nil
