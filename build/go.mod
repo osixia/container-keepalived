@@ -2,10 +2,12 @@ module github.com/osixia/container-keepalived/build
 
 go 1.26.9
 
-require github.com/osixia/dagger-build v0.0.0-20261015194426-55e8bdd25dbb
+require (
+	dagger.io/dagger v0.21.10
+	github.com/osixia/dagger-build v0.0.0-20261015194426-55e8bdd25dbb
+)
 
 require (
-	dagger.io/dagger v0.21.10 // indirect
 	github.com/99designs/gqlgen v0.17.95 // indirect
 	github.com/Khan/genqlient v0.8.1 // indirect
 	github.com/adrg/xdg v0.5.3 // indirect

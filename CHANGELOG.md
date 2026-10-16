@@ -7,6 +7,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
 ## [Unreleased]
 ### Added
   - Enable BFD and HTTP_GET regex support in Keepalived
+  - Dagger tests for the image content and Keepalived runtime: configuration, notify script, virtual IPs and hot reload
 
 ### Changed
   - Upgrade baseimage to osixia/baseimage:alpine-2.0.0
