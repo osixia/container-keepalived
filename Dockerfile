@@ -14,27 +14,25 @@ RUN container packages install --update --clean \
     autoconf \
     automake \
     curl \
-    file \
     file-dev \
     gcc \
-    inotify-tools \
     ipset \
     ipset-dev \
     iptables \
     iptables-dev \
+    libcrypto3 \
     libip4tc \
     libip6tc \
+    libmagic \
     libnftnl \
     libnftnl-dev \
     libnl3 \
     libnl3-dev \
+    libssl3 \
     linux-headers \
     make \
     musl \
     musl-dev \
-    net-snmp \
-    net-snmp-dev \
-    openssl \
     openssl-dev \
     pcre2 \
     pcre2-dev \
@@ -71,7 +69,6 @@ RUN container packages install --update --clean \
     linux-headers \
     make \
     musl-dev \
-    net-snmp-dev \
     openssl-dev \
     pcre2-dev \
     pkgconf
