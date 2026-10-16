@@ -37,7 +37,7 @@ RUN container packages install --update --clean \
     pcre2 \
     pcre2-dev \
     pkgconf \
-    && curl -o keepalived.tar.gz -SL https://keepalived.org/software/keepalived-${KEEPALIVED_VERSION}.tar.gz \
+    && curl -fsSL --proto '=https' --tlsv1.2 -o keepalived.tar.gz https://keepalived.org/software/keepalived-${KEEPALIVED_VERSION}.tar.gz \
     && echo "${KEEPALIVED_MD5}  keepalived.tar.gz" | md5sum -c - \
     && mkdir -p /tmp/keepalived-sources \
     && tar -xzf keepalived.tar.gz --strip 1 -C /tmp/keepalived-sources \

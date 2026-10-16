@@ -14,6 +14,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
   - Enable Keepalived script security in the default configuration template
   - Build Keepalived with compiler optimizations to enable _FORTIFY_SOURCE (-O2, -O1 on arm64 to avoid gcc crashes under QEMU)
   - Remove unused packages from the image (net-snmp, inotify-tools, openssl and file commands), keeping only the libraries Keepalived needs
+  - Only download the Keepalived source archive over HTTPS and fail on HTTP errors
 
 ## [2.4.3] - 2026-10-06
 ### Added
