@@ -13,10 +13,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
   - Upgrade baseimage to osixia/baseimage:alpine-2.0.0
   - Use osixia/dagger-build as build tool
   - Pin GitHub Actions to commit SHAs and split CI into build and publish jobs
+  - Build and test each architecture natively on its own runner instead of under QEMU, and publish them together as a single multi-arch image
 
 ### Security
   - Enable Keepalived script security in the default configuration template
-  - Build Keepalived with compiler optimizations to enable _FORTIFY_SOURCE (-O2, -O1 on arm64 to avoid gcc crashes under QEMU)
+  - Build Keepalived with compiler optimizations (-O2) to enable _FORTIFY_SOURCE
   - Remove unused packages from the image (net-snmp, inotify-tools, openssl and file commands), keeping only the libraries Keepalived needs
   - Only download the Keepalived source archive over HTTPS and fail on HTTP errors
 

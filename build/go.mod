@@ -4,7 +4,7 @@ go 1.26.9
 
 require (
 	dagger.io/dagger v0.21.10
-	github.com/osixia/dagger-build v0.0.0-20261015194426-55e8bdd25dbb
+	github.com/osixia/dagger-build v0.0.0-20261016204440-cdddcccbc11c
 )
 
 require (
