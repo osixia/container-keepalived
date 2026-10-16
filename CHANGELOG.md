@@ -10,6 +10,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
   - Use osixia/dagger-build as build tool
   - Pin GitHub Actions to commit SHAs and split CI into build and publish jobs
 
+### Security
+  - Enable Keepalived script security in the default configuration template
+
 ## [2.4.3] - 2026-10-06
 ### Added
   - Enable JSON support in Keepalived
