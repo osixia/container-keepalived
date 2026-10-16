@@ -4,8 +4,8 @@ import (
 	"context"
 	"os"
 
-	"github.com/osixia/container-baseimage/build/cmd"
-	"github.com/osixia/container-baseimage/build/config"
+	"github.com/osixia/dagger-build/cmd"
+	"github.com/osixia/dagger-build/config"
 )
 
 func main() {
@@ -13,7 +13,7 @@ func main() {
 	// image
 
 	var KeepalivedImage = &config.Image{
-		BaseImage:    "osixia/baseimage:alpine-2.0.0-rc",
+		BaseImage:    "osixia/baseimage:alpine-2.0.0",
 		Distribution: config.Alpine,
 
 		Name:        "osixia/keepalived",

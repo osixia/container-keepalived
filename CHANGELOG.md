@@ -4,6 +4,12 @@ Please refer to the upstream [Keepalived Release Notes](https://www.keepalived.o
 
 The format is based on [Keep a Changelog](https://keepachangelog.com) and this project follows keepalived versioning.
 
+## [Unreleased]
+### Changed
+  - Upgrade baseimage to osixia/baseimage:alpine-2.0.0
+  - Use osixia/dagger-build as build tool
+  - Pin GitHub Actions to commit SHAs and split CI into build and publish jobs
+
 ## [2.4.3] - 2026-10-06
 ### Added
   - Enable JSON support in Keepalived

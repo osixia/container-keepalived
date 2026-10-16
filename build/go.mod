@@ -1,8 +1,8 @@
 module github.com/osixia/container-keepalived/build
 
-go 1.26.1
+go 1.26.9
 
-require github.com/osixia/container-baseimage/build v0.0.0-20261006190634-e0121ceb070a
+require github.com/osixia/dagger-build v0.0.0-20261015194426-55e8bdd25dbb
 
 require (
 	dagger.io/dagger v0.21.10 // indirect
