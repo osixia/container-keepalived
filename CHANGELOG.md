@@ -12,6 +12,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
 
 ### Security
   - Enable Keepalived script security in the default configuration template
+  - Build Keepalived with compiler optimizations to enable _FORTIFY_SOURCE (-O2, -O1 on arm64 to avoid gcc crashes under QEMU)
 
 ## [2.4.3] - 2026-10-06
 ### Added

@@ -44,7 +44,9 @@ RUN container packages install --update --clean \
     && mkdir -p /tmp/keepalived-sources \
     && tar -xzf keepalived.tar.gz --strip 1 -C /tmp/keepalived-sources \
     && cd /tmp/keepalived-sources \
-    && (CFLAGS="-O0" CXXFLAGS="-O0" ./configure \
+    # gcc segfaults with -O2 on arm64 under QEMU, -O1 still enables _FORTIFY_SOURCE
+    && if [ "$(uname -m)" = "aarch64" ]; then OPTIMIZATION="-O1"; else OPTIMIZATION="-O2"; fi \
+    && (CFLAGS="${OPTIMIZATION}" ./configure \
         --enable-json \
         || { cat config.log; exit 1; }) \
     && make -j1 V=1 \
