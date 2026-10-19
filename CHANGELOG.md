@@ -6,6 +6,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
 
 ## [Unreleased]
 ### Added
+  - Run Keepalived integration checks with `/tmp` mounted read-only
   - Test read-only mounted templates and hot reload after Kubernetes-style projected configuration updates
   - Enable BFD and HTTP_GET regex support in Keepalived
   - Dagger tests for the image content and Keepalived runtime: configuration, notify script, virtual IPs and hot reload

@@ -1,6 +1,11 @@
 #!/bin/sh
 set -eu
 
+if touch /tmp/keepalived-write-probe 2>/dev/null; then
+  echo '/tmp is writable' >&2
+  exit 1
+fi
+
 fail() {
   echo "$*" >&2
   exit 1
@@ -26,7 +31,7 @@ for option in BFD REGEX JSON NFTABLES; do
 done
 
 interface=$(ip -o route show default | awk '{print $5; exit}')
-cat > /tmp/keepalived-features.conf <<EOF
+cat > /run/container/keepalived-features.conf <<EOF
 bfd_instance BFD_1 {
   neighbor_ip 192.0.2.250
 }
@@ -55,7 +60,7 @@ virtual_server 192.0.2.231 80 {
   }
 }
 EOF
-keepalived -f /tmp/keepalived-features.conf --config-test || fail 'BFD and HTTP_GET regex configuration rejected'
+keepalived -f /run/container/keepalived-features.conf --config-test || fail 'BFD and HTTP_GET regex configuration rejected'
 
 # packages only needed to build keepalived, or not needed at all
 for file in /usr/sbin/snmpd /usr/bin/openssl /usr/bin/file /usr/bin/inotifywait /usr/bin/gcc /usr/bin/make /usr/bin/curl; do

@@ -15,8 +15,8 @@ func Image(ctx context.Context, image *dagger.Container) error {
 	ctx, cancel := context.WithTimeout(ctx, 60*time.Second)
 	defer cancel()
 
-	fixture := image.WithNewFile("/tmp/keepalived-image-check.sh", imageCheck, dagger.ContainerWithNewFileOpts{Permissions: 0755})
-	if err := run(ctx, fixture, []string{"sh", "/tmp/keepalived-image-check.sh"}, dagger.ContainerWithExecOpts{}); err != nil {
+	fixture := image.WithNewFile("/run/container/keepalived-image-check.sh", imageCheck, dagger.ContainerWithNewFileOpts{Permissions: 0755})
+	if err := run(ctx, fixture, []string{"sh", "/run/container/keepalived-image-check.sh"}, dagger.ContainerWithExecOpts{}); err != nil {
 		return fmt.Errorf("image checks: %w", err)
 	}
 
@@ -30,8 +30,8 @@ func Runtime(ctx context.Context, image *dagger.Container) error {
 	ctx, cancel := context.WithTimeout(ctx, 3*time.Minute)
 	defer cancel()
 
-	fixture := image.WithNewFile("/tmp/keepalived-runtime-check.sh", runtimeCheck, dagger.ContainerWithNewFileOpts{Permissions: 0755})
-	if err := run(ctx, fixture, []string{"sh", "/tmp/keepalived-runtime-check.sh"}, dagger.ContainerWithExecOpts{InsecureRootCapabilities: true, NoInit: true}); err != nil {
+	fixture := image.WithNewFile("/run/container/keepalived-runtime-check.sh", runtimeCheck, dagger.ContainerWithNewFileOpts{Permissions: 0755})
+	if err := run(ctx, fixture, []string{"sh", "/run/container/keepalived-runtime-check.sh"}, dagger.ContainerWithExecOpts{InsecureRootCapabilities: true, NoInit: true}); err != nil {
 		return fmt.Errorf("runtime checks: %w", err)
 	}
 
@@ -42,17 +42,21 @@ func Runtime(ctx context.Context, image *dagger.Container) error {
 func ReadOnlyTemplate(ctx context.Context, image *dagger.Container) error {
 	ctx, cancel := context.WithTimeout(ctx, time.Minute)
 	defer cancel()
-	fixture := image.WithMountedDirectory("/tmp/readonly-templates",
+	fixture := image.WithMountedDirectory("/run/container/readonly-templates",
 		image.Directory("/container/services/keepalived-conf/assets/confs"),
 		dagger.ContainerWithMountedDirectoryOpts{ReadOnly: true}).
-		WithEnvVariable("KEEPALIVED_CONF_TEMPLATE", "/tmp/readonly-templates/keepalived.conf.template").
-		WithEnvVariable("KEEPALIVED_CONF", "/tmp/readonly-rendered.conf")
+		WithEnvVariable("KEEPALIVED_CONF_TEMPLATE", "/run/container/readonly-templates/keepalived.conf.template").
+		WithEnvVariable("KEEPALIVED_CONF", "/run/container/readonly-rendered.conf")
 	return run(ctx, fixture, []string{"bash", "-ec", `
+ if touch /tmp/keepalived-write-probe 2>/dev/null; then
+   echo '/tmp is writable' >&2
+   exit 1
+ fi
  KEEPALIVED_INTERFACE=$(ip -o route show default | awk '{print $5; exit}')
  test -n "${KEEPALIVED_INTERFACE}"
  export KEEPALIVED_INTERFACE
  template_before=$(cat "${KEEPALIVED_CONF_TEMPLATE}")
- if touch /tmp/readonly-templates/write-probe 2>/dev/null; then
+ if touch /run/container/readonly-templates/write-probe 2>/dev/null; then
    echo 'template mount is writable' >&2
    exit 1
  fi
@@ -72,6 +76,8 @@ func ProjectedConfig(ctx context.Context, image *dagger.Container) error {
 func run(ctx context.Context, container *dagger.Container, args []string, opts dagger.ContainerWithExecOpts) error {
 
 	opts.Expect = dagger.ReturnTypeAny
+	container = container.WithMountedDirectory("/tmp", container.Directory("/tmp"),
+		dagger.ContainerWithMountedDirectoryOpts{ReadOnly: true})
 	exec := container.WithExec(args, opts)
 
 	code, err := exec.ExitCode(ctx)

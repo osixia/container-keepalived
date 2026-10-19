@@ -1,11 +1,16 @@
 #!/bin/sh
 set -eu
 
+if touch /tmp/keepalived-write-probe 2>/dev/null; then
+  echo '/tmp is writable' >&2
+  exit 1
+fi
+
 # This script runs as PID 1: the notify script logs to /proc/1/fd/1,
 # so all output goes through a pipe, like in a real container, to a log
 # file, and fd 3 keeps the original stdout.
-log=/tmp/keepalived-runtime.log
-pipe=/tmp/keepalived-runtime.pipe
+log=/run/container/keepalived-runtime.log
+pipe=/run/container/keepalived-runtime.pipe
 mkfifo "$pipe"
 cat "$pipe" >"$log" &
 logger=$!
@@ -56,7 +61,7 @@ export KEEPALIVED_PASSWORD="t3st"
 if [ "${TEST_PROJECTED_CONFIG:-false}" = true ]; then
   # Generate a valid fixture, then expose it through projected-volume symlinks.
   container --skip-process
-  projected=/tmp/keepalived-projected
+  projected=/run/container/keepalived-projected
   mkdir -p "$projected/..revision1"
   cp "$conf" "$projected/..revision1/keepalived.conf"
   chmod 0444 "$projected/..revision1/keepalived.conf"

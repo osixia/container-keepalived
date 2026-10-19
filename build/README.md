@@ -26,3 +26,6 @@ on the engine platform only:
 - runtime: configuration generated from environment variables, script security,
   notify script logs, virtual IP set when master, hot reload and virtual IPs
   removed on stop.
+
+All checks mount `/tmp` read-only. Test fixtures and runtime scratch files use
+`/run/container`, verifying startup, virtual IPs and reloads without a writable `/tmp`.
