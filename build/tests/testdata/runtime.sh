@@ -53,6 +53,19 @@ export KEEPALIVED_UNICAST_PEERS="192.0.2.250"
 export KEEPALIVED_VIRTUAL_IPS="$vip1"
 export KEEPALIVED_PASSWORD="t3st"
 
+if [ "${TEST_PROJECTED_CONFIG:-false}" = true ]; then
+  # Generate a valid fixture, then expose it through projected-volume symlinks.
+  container --skip-process
+  projected=/tmp/keepalived-projected
+  mkdir -p "$projected/..revision1"
+  cp "$conf" "$projected/..revision1/keepalived.conf"
+  chmod 0444 "$projected/..revision1/keepalived.conf"
+  ln -s ..revision1 "$projected/..data"
+  ln -s ..data/keepalived.conf "$projected/keepalived.conf"
+  conf="$projected/keepalived.conf"
+  export KEEPALIVED_CONF="$conf"
+fi
+
 container --kill-all=false &
 runner=$!
 
@@ -72,10 +85,31 @@ if grep -F 'SECURITY VIOLATION' "$log"; then
 fi
 
 # hot reload when the configuration changes
-sed -i "s/^\( *\)$vip1\$/&\n\1$vip2/" "$conf"
+if [ "${TEST_PROJECTED_CONFIG:-false}" = true ]; then
+  mkdir "$projected/..revision2"
+  sed "s/^\( *\)$vip1\$/&\n\1$vip2/" "$conf" > "$projected/..revision2/keepalived.conf"
+  chmod 0444 "$projected/..revision2/keepalived.conf"
+  ln -s ..revision2 "$projected/..data-next"
+  mv -Tf "$projected/..data-next" "$projected/..data"
+else
+  sed -i "s/^\( *\)$vip1\$/&\n\1$vip2/" "$conf"
+fi
 grep -qF "$vip2" "$conf" || fail 'test could not add a virtual IP to the configuration'
 wait_for "grep -qF 'Reload complete' $log"
 wait_for "ip -o addr show dev $interface | grep -qF ' $vip2/'"
+
+if [ "${TEST_PROJECTED_CONFIG:-false}" = true ]; then
+  # A second update proves the watcher survives replacement of the old target.
+  mkdir "$projected/..revision3"
+  cp "$projected/..revision1/keepalived.conf" "$projected/..revision3/keepalived.conf"
+  chmod 0444 "$projected/..revision3/keepalived.conf"
+  rm -r "$projected/..revision1"
+  ln -s ..revision3 "$projected/..data-next"
+  mv -Tf "$projected/..data-next" "$projected/..data"
+  wait_for "! ip -o addr show dev $interface | grep -qF ' $vip2/'"
+  wait_for "ip -o addr show dev $interface | grep -qF ' $vip1/'"
+  grep -qF 'auth_pass t3st' "$conf" || fail 'projected configuration was changed'
+fi
 
 # virtual IPs are removed when the container stops
 kill -TERM "$runner"

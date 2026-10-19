@@ -21,6 +21,8 @@ on the engine platform only:
 
 - image content: keepalived libraries, `iptables` command, BFD and HTTP_GET regex
   support, and no build or unused packages,
+- read-only mounted templates: rendering, source preservation and configuration validation,
+- projected configuration: hot reload after two atomic `..data` symlink replacements,
 - runtime: configuration generated from environment variables, script security,
   notify script logs, virtual IP set when master, hot reload and virtual IPs
   removed on stop.

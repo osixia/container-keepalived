@@ -16,7 +16,13 @@ func Run(ctx context.Context, builds []*job.BuildResult) error {
 			if err := Image(ctx, image); err != nil {
 				return err
 			}
+			if err := ReadOnlyTemplate(ctx, image); err != nil {
+				return err
+			}
 			if err := Runtime(ctx, image); err != nil {
+				return err
+			}
+			if err := ProjectedConfig(ctx, image); err != nil {
 				return err
 			}
 		}

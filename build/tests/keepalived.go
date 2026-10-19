@@ -38,6 +38,36 @@ func Runtime(ctx context.Context, image *dagger.Container) error {
 	return nil
 }
 
+// ReadOnlyTemplate renders a template from an actual read-only mount.
+func ReadOnlyTemplate(ctx context.Context, image *dagger.Container) error {
+	ctx, cancel := context.WithTimeout(ctx, time.Minute)
+	defer cancel()
+	fixture := image.WithMountedDirectory("/tmp/readonly-templates",
+		image.Directory("/container/services/keepalived-conf/assets/confs"),
+		dagger.ContainerWithMountedDirectoryOpts{ReadOnly: true}).
+		WithEnvVariable("KEEPALIVED_CONF_TEMPLATE", "/tmp/readonly-templates/keepalived.conf.template").
+		WithEnvVariable("KEEPALIVED_CONF", "/tmp/readonly-rendered.conf")
+	return run(ctx, fixture, []string{"bash", "-ec", `
+ KEEPALIVED_INTERFACE=$(ip -o route show default | awk '{print $5; exit}')
+ test -n "${KEEPALIVED_INTERFACE}"
+ export KEEPALIVED_INTERFACE
+ template_before=$(cat "${KEEPALIVED_CONF_TEMPLATE}")
+ if touch /tmp/readonly-templates/write-probe 2>/dev/null; then
+   echo 'template mount is writable' >&2
+   exit 1
+ fi
+ container --skip-process
+ test -s "${KEEPALIVED_CONF}"
+ test "$(cat "${KEEPALIVED_CONF_TEMPLATE}")" = "${template_before}"
+ keepalived -f "${KEEPALIVED_CONF}" --config-test
+ `}, dagger.ContainerWithExecOpts{})
+}
+
+// ProjectedConfig checks reloads after Kubernetes-style atomic symlink updates.
+func ProjectedConfig(ctx context.Context, image *dagger.Container) error {
+	return Runtime(ctx, image.WithEnvVariable("TEST_PROJECTED_CONFIG", "true"))
+}
+
 // run executes a check script and returns its output on failure, which Dagger does not show.
 func run(ctx context.Context, container *dagger.Container, args []string, opts dagger.ContainerWithExecOpts) error {
 
