@@ -38,6 +38,10 @@ You can also provide your own `keepalived.conf` by mounting it at the path defin
 docker run --volume /data/my-keepalived.conf:/etc/keepalived/keepalived.conf osixia/keepalived
 ```
 
+**HTTP(S) health-check scripts**
+
+`curl` is available in the runtime image for custom Keepalived health-check scripts (for example, scripts invoked through `vrrp_script`).
+
 **Passing command-line arguments to Keepalived**
 
 The `osixia/keepalived` container allows you to pass additional command-line arguments directly to the keepalived binary.
