@@ -4,6 +4,10 @@ Please refer to the upstream [Keepalived Release Notes](https://www.keepalived.o
 
 The format is based on [Keep a Changelog](https://keepachangelog.com) and this project follows keepalived versioning.
 
+## Unreleased
+### Fixed
+  - Keep `curl` available in the runtime image for custom HTTP(S) health-check scripts (#72)
+
 ## [2.4.3] - 2026-10-06
 ### Added
   - Enable JSON support in Keepalived
