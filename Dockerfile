@@ -59,7 +59,6 @@ RUN container packages install --update --clean \
     alpine-sdk \
     autoconf \
     automake \
-    curl \
     file-dev \
     gcc \
     ipset-dev \
