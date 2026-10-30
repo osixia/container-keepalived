@@ -24,6 +24,9 @@ fi
 # vrrp_iptables silently sets no rules instead of falling back to nftables
 command -v iptables >/dev/null || fail 'missing iptables command'
 
+# custom health-check scripts need curl in the runtime image
+curl --version || fail 'curl is unavailable in the runtime image'
+
 # optional features enabled at build time
 options=$(keepalived --version 2>&1 | grep '^Config options:')
 for option in BFD REGEX JSON NFTABLES; do
@@ -63,6 +66,6 @@ EOF
 keepalived -f /run/container/keepalived-features.conf --config-test || fail 'BFD and HTTP_GET regex configuration rejected'
 
 # packages only needed to build keepalived, or not needed at all
-for file in /usr/sbin/snmpd /usr/bin/openssl /usr/bin/file /usr/bin/inotifywait /usr/bin/gcc /usr/bin/make /usr/bin/curl; do
+for file in /usr/sbin/snmpd /usr/bin/openssl /usr/bin/file /usr/bin/inotifywait /usr/bin/gcc /usr/bin/make; do
   [ ! -e "$file" ] || fail "unexpected file in image: $file"
 done

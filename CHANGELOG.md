@@ -12,10 +12,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com) and this p
   - Dagger tests for the image content and Keepalived runtime: configuration, notify script, virtual IPs and hot reload
 
 ### Changed
-  - Upgrade baseimage to osixia/baseimage:alpine-2.0.0
+  - Upgrade baseimage to osixia/baseimage:alpine-2.1.0
   - Use osixia/dagger-build as build tool
   - Pin GitHub Actions to commit SHAs and split CI into build and publish jobs
   - Build and test each architecture natively on its own runner instead of under QEMU, and publish them together as a single multi-arch image
+
+### Fixed
+  - Keep `curl` available in the runtime image for custom HTTP(S) health-check scripts (#72)
+  - Reload Keepalived after Kubernetes-style projected configuration symlink updates
 
 ### Security
   - Enable Keepalived script security in the default configuration template

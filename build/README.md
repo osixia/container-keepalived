@@ -19,8 +19,8 @@ The shared `job.DefaultTest` builds the images and checks their entrypoint's
 version. `main.go` installs `job.Test` to run the additional checks in `tests/`,
 on the engine platform only:
 
-- image content: keepalived libraries, `iptables` command, BFD and HTTP_GET regex
-  support, and no build or unused packages,
+- image content: keepalived libraries, `iptables` command, working `curl --version`,
+  BFD and HTTP_GET regex support, and no build or unused packages,
 - read-only mounted templates: rendering, source preservation and configuration validation,
 - projected configuration: hot reload after two atomic `..data` symlink replacements,
 - runtime: configuration generated from environment variables, script security,

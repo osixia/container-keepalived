@@ -56,6 +56,10 @@ docker run --network=host --cap-add=NET_ADMIN --cap-add=NET_RAW --cap-add=NET_BR
   --volume /data/my-keepalived.conf:/etc/keepalived/keepalived.conf osixia/keepalived
 ```
 
+**HTTP(S) health-check scripts**
+
+`curl` is available in the runtime image for custom Keepalived health-check scripts (for example, scripts invoked through `vrrp_script`).
+
 **Passing command-line arguments to Keepalived**
 
 Arguments specified after `--` are forwarded to the keepalived process:
