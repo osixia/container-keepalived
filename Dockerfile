@@ -1,4 +1,4 @@
-ARG BASE_IMAGE="osixia/baseimage:alpine-2.0.0-rc"
+ARG BASE_IMAGE="osixia/baseimage:alpine-2.0.0"
 FROM ${BASE_IMAGE}
 
 ARG IMAGE="osixia/keepalived:develop"
@@ -14,38 +14,38 @@ RUN container packages install --update --clean \
     autoconf \
     automake \
     curl \
-    file \
     file-dev \
     gcc \
-    inotify-tools \
     ipset \
     ipset-dev \
     iptables \
     iptables-dev \
+    libcrypto3 \
     libip4tc \
     libip6tc \
+    libmagic \
     libnftnl \
     libnftnl-dev \
     libnl3 \
     libnl3-dev \
+    libssl3 \
     linux-headers \
     make \
     musl \
     musl-dev \
-    net-snmp \
-    net-snmp-dev \
-    openssl \
     openssl-dev \
     pcre2 \
     pcre2-dev \
     pkgconf \
-    && curl -o keepalived.tar.gz -SL https://keepalived.org/software/keepalived-${KEEPALIVED_VERSION}.tar.gz \
+    && curl -fsSL --proto '=https' --tlsv1.2 -o keepalived.tar.gz https://keepalived.org/software/keepalived-${KEEPALIVED_VERSION}.tar.gz \
     && echo "${KEEPALIVED_MD5}  keepalived.tar.gz" | md5sum -c - \
     && mkdir -p /tmp/keepalived-sources \
     && tar -xzf keepalived.tar.gz --strip 1 -C /tmp/keepalived-sources \
     && cd /tmp/keepalived-sources \
-    && (CFLAGS="-O0" CXXFLAGS="-O0" ./configure \
+    && (CFLAGS="-O2" ./configure \
+        --enable-bfd \
         --enable-json \
+        --enable-regex \
         || { cat config.log; exit 1; }) \
     && make -j1 V=1 \
     && make install \
@@ -68,7 +68,6 @@ RUN container packages install --update --clean \
     linux-headers \
     make \
     musl-dev \
-    net-snmp-dev \
     openssl-dev \
     pcre2-dev \
     pkgconf

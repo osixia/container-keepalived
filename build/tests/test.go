@@ -2,19 +2,31 @@ package tests
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/osixia/container-baseimage/build/job"
+	"github.com/osixia/dagger-build/job"
 )
 
-// Run checks that curl is available in each built runtime image.
+// Run checks keepalived-specific behavior after the reusable job's version check. CI builds
+// each arch on a native runner: run locally with --arches matching the host to avoid emulation.
 func Run(ctx context.Context, builds []*job.BuildResult) error {
+
 	for _, build := range builds {
 		for _, image := range build.Containers {
-			if _, err := image.WithExec([]string{"curl", "--version"}).Sync(ctx); err != nil {
-				return fmt.Errorf("curl runtime check for %s: %w", build.Image.Name, err)
+
+			if err := Image(ctx, image); err != nil {
+				return err
+			}
+			if err := ReadOnlyTemplate(ctx, image); err != nil {
+				return err
+			}
+			if err := Runtime(ctx, image); err != nil {
+				return err
+			}
+			if err := ProjectedConfig(ctx, image); err != nil {
+				return err
 			}
 		}
 	}
+
 	return nil
 }

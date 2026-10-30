@@ -4,9 +4,27 @@ Please refer to the upstream [Keepalived Release Notes](https://www.keepalived.o
 
 The format is based on [Keep a Changelog](https://keepachangelog.com) and this project follows keepalived versioning.
 
-## Unreleased
+## [Unreleased]
+### Added
+  - Run Keepalived integration checks with `/tmp` mounted read-only
+  - Test read-only mounted templates and hot reload after Kubernetes-style projected configuration updates
+  - Enable BFD and HTTP_GET regex support in Keepalived
+  - Dagger tests for the image content and Keepalived runtime: configuration, notify script, virtual IPs and hot reload
+
+### Changed
+  - Upgrade baseimage to osixia/baseimage:alpine-2.0.0
+  - Use osixia/dagger-build as build tool
+  - Pin GitHub Actions to commit SHAs and split CI into build and publish jobs
+  - Build and test each architecture natively on its own runner instead of under QEMU, and publish them together as a single multi-arch image
+
 ### Fixed
   - Keep `curl` available in the runtime image for custom HTTP(S) health-check scripts (#72)
+
+### Security
+  - Enable Keepalived script security in the default configuration template
+  - Build Keepalived with compiler optimizations (-O2) to enable _FORTIFY_SOURCE
+  - Remove unused packages from the image (net-snmp, inotify-tools, openssl and file commands), keeping only the libraries Keepalived needs
+  - Only download the Keepalived source archive over HTTPS and fail on HTTP errors
 
 ## [2.4.3] - 2026-10-06
 ### Added

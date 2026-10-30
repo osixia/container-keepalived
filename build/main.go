@@ -6,10 +6,10 @@ import (
 
 	"dagger.io/dagger"
 
-	"github.com/osixia/container-baseimage/build/cmd"
-	"github.com/osixia/container-baseimage/build/config"
-	"github.com/osixia/container-baseimage/build/job"
 	"github.com/osixia/container-keepalived/build/tests"
+	"github.com/osixia/dagger-build/cmd"
+	"github.com/osixia/dagger-build/config"
+	"github.com/osixia/dagger-build/job"
 )
 
 func main() {
@@ -17,7 +17,7 @@ func main() {
 	// image
 
 	var KeepalivedImage = &config.Image{
-		BaseImage:    "osixia/baseimage:alpine-2.0.0-rc",
+		BaseImage:    "osixia/baseimage:alpine-2.0.0",
 		Distribution: config.Alpine,
 
 		Name:        "osixia/keepalived",
@@ -46,7 +46,7 @@ func main() {
 		Project:      "container-keepalived",
 	}
 
-	// tests
+	// custom function
 
 	job.Test = func(ctx context.Context, client *dagger.Client, options any) ([]*job.BuildResult, error) {
 		builds, err := job.DefaultTest(ctx, client, options)
