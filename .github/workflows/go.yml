@@ -37,21 +37,10 @@ jobs:
         with:
           work-dir: build
 
-  runtime-smoke-test:
-    name: runtime smoke test
-    runs-on: ubuntu-latest
-    needs: [lint, shellcheck, govulncheck]
-    steps:
-      - uses: actions/checkout@v7.0.1
-      - name: Build runtime image
-        run: docker build --tag keepalived-runtime-smoke .
-      - name: Verify curl is available at runtime
-        run: docker run --rm --entrypoint curl keepalived-runtime-smoke --version
-
   build:
     name: build
     runs-on: ubuntu-latest
-    needs: [runtime-smoke-test]
+    needs: [lint, shellcheck, govulncheck]
     permissions:
       contents: write
       id-token: write

@@ -4,8 +4,12 @@ import (
 	"context"
 	"os"
 
+	"dagger.io/dagger"
+
 	"github.com/osixia/container-baseimage/build/cmd"
 	"github.com/osixia/container-baseimage/build/config"
+	"github.com/osixia/container-baseimage/build/job"
+	"github.com/osixia/container-keepalived/build/tests"
 )
 
 func main() {
@@ -40,6 +44,19 @@ func main() {
 	config.ProjectGithubRepo = &config.GithubRepo{
 		Organization: "osixia",
 		Project:      "container-keepalived",
+	}
+
+	// tests
+
+	job.Test = func(ctx context.Context, client *dagger.Client, options any) ([]*job.BuildResult, error) {
+		builds, err := job.DefaultTest(ctx, client, options)
+		if err != nil {
+			return nil, err
+		}
+		if err := tests.Run(ctx, builds); err != nil {
+			return nil, err
+		}
+		return builds, nil
 	}
 
 	// execute cmd
